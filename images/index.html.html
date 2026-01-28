@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html, body{
+    background:#050505;
+    color:#f0f0f0;
+    font-family:'Cormorant Garamond', serif;
+    overflow-x:hidden;
+}
+
+/* textura sutil */
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:url("https://www.transparenttextures.com/patterns/grain.png");
+    opacity:0.12;
+    pointer-events:none;
+    z-index:10;
+}
+
+/* secciones */
+section{
+    padding:120px 0;
+    display:flex;
+    justify-content:center;
+    position:relative;
+}
+
+/* FRASE INICIAL */
+.quote{
+    min-height:100svh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:clamp(1.4rem,4vw,2.3rem);
+    padding:0 12%;
+    opacity:0;
+    transform:translateY(40px);
+    animation:fadeIn 3s ease forwards;
+}
+
+/* VIDEO */
+.video-wrapper{
+    width:90%;
+    max-width:900px;
+}
+
+.video-wrapper video{
+    width:100%;
+    border-radius:6px;
+    object-fit:cover;
+    transition:filter 1.2s ease;
+}
+
+/* GALERÍA VERTICAL */
+.gallery{
+    width:100%;
+    max-width:720px;
+    display:flex;
+    flex-direction:column;
+    gap:120px;
+}
+
+/* FOTO + MARCO */
+.photo{
+    opacity:0;
+    transform:translateY(60px);
+    transition:2s ease;
+}
+
+.photo.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.frame{
+    padding:20px;
+    background:#0b0b0b;
+    border:1px solid rgba(255,255,255,0.18);
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,0.05),
+        0 35px 70px rgba(0,0,0,0.7);
+}
+
+.frame img{
+    width:100%;
+    height:420px;
+    object-fit:cover;
+    filter:grayscale(100%) contrast(1.1);
+}
+
+/* FINAL */
+.final-section{
+    min-height:140vh;
+    padding:160px 0;
+    position:relative;
+    overflow:hidden;
+}
+
+.final-text{
+    position:relative;
+    z-index:2;
+    max-width:720px;
+    text-align:center;
+    font-size:1.3rem;
+    font-style:italic;
+    padding:0 14%;
+}
+
+/* ESTRELLAS */
+.stars{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+}
+
+.star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    opacity:0.9;
+    animation:fall linear infinite;
+}
+
+@keyframes fall{
+    from{ transform:translateY(-10%); opacity:0; }
+    to{ transform:translateY(110%); opacity:1; }
+}
+
+@keyframes fadeIn{
+    to{ opacity:1; transform:translateY(0); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- FRASE -->
+<section>
+    <div class="quote">
+        “Lo esencial es invisible a los ojos”
+    </div>
+</section>
+
+<!-- VIDEO -->
+<section>
+    <div class="video-wrapper">
+        <video id="mainVideo" src="images/video.mp4" controls playsinline></video>
+    </div>
+</section>
+
+<!-- FOTOS -->
+<section>
+    <div class="gallery">
+        <div class="photo"><div class="frame"><img src="images/imagen1.jpeg"></div></div>
+        <div class="photo"><div class="frame"><img src="images/imagen2.jpeg"></div></div>
+        <div class="photo"><div class="frame"><img src="images/imagen3.jpeg"></div></div>
+        <div class="photo"><div class="frame"><img src="images/imagen4.jpeg"></div></div>
+        <div class="photo"><div class="frame"><img src="images/imagen5.jpeg"></div></div>
+    </div>
+</section>
+
+<!-- FINAL CON CONSTELACIONES -->
+<section class="final-section">
+    <div class="stars"></div>
+    <div class="final-text">
+        Todo lo que somos sigue aquí, incluso cuando el tiempo pasa.
+    </div>
+</section>
+
+<script>
+/* blur del video al hacer scroll */
+const video = document.getElementById("mainVideo");
+window.addEventListener("scroll", ()=>{
+    const rect = video.getBoundingClientRect();
+    const vh = window.innerHeight;
+    if(rect.top < vh){
+        const blur = Math.min((vh - rect.top) / 250, 6);
+        video.style.filter = `blur(${blur}px)`;
+    }
+});
+
+/* revelar fotos */
+const observer = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.classList.add("show");
+        }
+    });
+},{threshold:0.3});
+
+document.querySelectorAll(".photo").forEach(p=>observer.observe(p));
+
+/* estrellas */
+const starsContainer = document.querySelector(".stars");
+for(let i=0;i<120;i++){
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.left = Math.random()*100 + "%";
+    star.style.top = Math.random()*100 + "%";
+    star.style.animationDuration = 6 + Math.random()*10 + "s";
+    star.style.animationDelay = Math.random()*5 + "s";
+    starsContainer.appendChild(star);
+}
+</script>
+
+</body>
+</html>
